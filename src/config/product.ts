@@ -1,5 +1,8 @@
 ﻿export const product = {
   productName: 'Social Pro Kit',
+  reviews: [] as { name: string; avatar?: string; rating: number; text: string; date: string; verifiedPurchase: boolean }[],
+  guarantee: { period: '', conditions: '', requestInstructions: '' },
+  mobileEditing: '',
   productDescription: '100 templates editáveis para deixar seu Instagram mais profissional.',
   productPrice: 29.90,
   // Substitua por imagens reais do produto. Sem imagens, são exibidos mockups demonstrativos em CSS.
