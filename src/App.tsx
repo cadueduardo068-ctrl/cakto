@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { motion, MotionConfig } from 'framer-motion';
 import { ArrowUpRight, ArrowRight, Check, Plus, LockKeyhole, Layers3, Clock3, Palette, CalendarDays, MousePointer2, Download, SlidersHorizontal, Store, Scissors, Coffee, Shirt, BriefcaseBusiness, Sparkles, Menu, X } from 'lucide-react';
 import { product, price, getCheckoutUrl } from './config/product';
-import { enableAnalytics, revokeAnalytics, trackCheckout } from './lib/analytics';
+import { CONSENT_KEY, enableAnalytics, readConsent, revokeAnalytics, saveConsent, trackCheckout, type Consent } from './lib/analytics';
 import { Benefits, Comparison, DemoImage, Guarantee, ProductShowcase, Progress, ReviewsOrGallery, ScrollCue, TextReveal } from './components/Experience';
 
 function Reveal({children, className = ''}: {children: ReactNode; className?: string}) {
@@ -34,11 +34,15 @@ export default function App() {
   },[]);
   const [legal,setLegal] = useState<'privacy'|'terms'|null>(null);
   const legalDialog=useRef<HTMLDialogElement>(null);
-  const [consent,setConsent] = useState<string|null>(()=>{try{return localStorage.getItem('social-pro-consent');}catch{return null;}});
+  const [consent,setConsent] = useState<Consent>(readConsent);
   const [preferences,setPreferences] = useState(false);
   useEffect(()=>{if(consent==='accepted') enableAnalytics();},[consent]);
+  useEffect(()=>{
+    const syncConsent=(event:StorageEvent)=>{if(event.key!==CONSENT_KEY&&event.key!==null)return;const value=readConsent();setConsent(value);if(value==='accepted')enableAnalytics();else revokeAnalytics();};
+    window.addEventListener('storage',syncConsent);return()=>window.removeEventListener('storage',syncConsent);
+  },[]);
   useEffect(()=>{if(!legal)return;const dialog=legalDialog.current;dialog?.showModal();const overflow=document.body.style.overflow;document.body.style.overflow='hidden';return()=>{dialog?.close();document.body.style.overflow=overflow;};},[legal]);
-  function chooseConsent(value:string){setConsent(value);setPreferences(false);try{localStorage.setItem('social-pro-consent',value);}catch{/* Storage unavailable. */}if(value==='rejected')revokeAnalytics();}
+  function chooseConsent(value:Exclude<Consent,null>){saveConsent(value);setConsent(value);setPreferences(false);}
   const faqs = [
     ['Como recebo meu produto?',product.deliveryDetails || 'O acesso ao produto digital é disponibilizado após a confirmação do pagamento. Consulte as instruções da sua compra para acessar o conteúdo.'],
     ['Posso editar os templates?',product.editingTool ? `Sim. Os modelos são editáveis em ${product.editingTool}. Consulte os requisitos nos detalhes do produto.` : 'Os modelos são editáveis. Confira os formatos e os requisitos do produto antes de concluir sua compra.'],
@@ -60,7 +64,7 @@ export default function App() {
   <Guarantee/><section className="section container faq" id="duvidas"><Reveal><span className="eyebrow">ANTES DO PRÓXIMO PASSO</span><h2>Ficou com<br/><em>alguma dúvida?</em></h2><p>Os detalhes também importam.</p></Reveal><div>{faqs.map(([q,a])=><details key={q}><summary>{q}<Plus size={19}/></summary><p>{a}</p></details>)}</div></section></main>
   <footer><div className="container footer-top"><a href="#" className="logo"><Layers3 size={22}/> SOCIAL<span className="logo-light">PRO</span><span className="logo-kit">KIT</span></a><p>Seu negócio tem personalidade.<br/>Seu Instagram também pode ter.</p><div><button onClick={()=>setLegal('privacy')}>Política de Privacidade</button><button onClick={()=>setLegal('terms')}>Termos de Uso</button>{product.metaPixelId && <button onClick={()=>setPreferences(true)}>Preferências de privacidade</button>}</div></div><div className="container footer-bottom"><span>© {new Date().getFullYear()} {product.productName}</span>{product.sellerName && <span>Responsável: {product.sellerName} {product.sellerDocument}</span>}{product.supportContact && <span><a href={`mailto:${product.supportContact}`}>{product.supportContact}</a></span>}</div></footer>
   {getCheckoutUrl() && stickyVisible && <div className="mobile-cta"><span><small>INVESTIMENTO ÚNICO</small><b>{price}</b></span><BuyButton>ACESSAR O KIT</BuyButton></div>}
-  {product.metaPixelId && (!consent || preferences) && <aside className="consent" aria-label="Preferências de privacidade"><p>Com sua autorização, usamos o Meta Pixel para medir visitas e cliques no checkout. Você pode recusar ou alterar sua escolha no rodapé.</p><button onClick={()=>chooseConsent('rejected')}>Recusar</button><button className="accept" onClick={()=>chooseConsent('accepted')}>Aceitar medição</button></aside>}
+  {product.metaPixelId && (!consent || preferences) && <aside className="consent" aria-label="Preferências de privacidade"><p>Com sua autorização, a Meta poderá usar cookies de publicidade para medir visitas e cliques no checkout e ajudar na avaliação dos anúncios no Facebook e Instagram. Você pode recusar ou mudar sua escolha em Preferências de privacidade, no rodapé.</p><button onClick={()=>chooseConsent('rejected')}>Recusar</button><button className="accept" onClick={()=>chooseConsent('accepted')}>Aceitar publicidade</button></aside>}
   {legal && <div className="modal-backdrop" onClick={()=>setLegal(null)}><dialog ref={legalDialog} className="legal-modal" onCancel={()=>setLegal(null)} aria-modal="true" aria-labelledby="legal-title" onClick={e=>e.stopPropagation()}><button autoFocus className="close-modal" aria-label="Fechar" onClick={()=>setLegal(null)}><X/></button><h2 id="legal-title">{legal==='privacy'?'Política de Privacidade':'Termos de Uso'}</h2><p>{(legal==='privacy'?product.privacyPolicy:product.termsOfUse) || (legal==='privacy'?'Esta página não possui formulário de cadastro e não coleta dados de cartão. O pagamento é realizado no checkout da Cakto, sujeito às políticas apresentadas naquele ambiente. Quando habilitada, a medição pelo Meta Pixel depende da sua autorização. Sua preferência de consentimento é armazenada neste navegador e pode ser alterada no rodapé.':'O Social Pro Kit é um produto digital. Os mockups desta página são composições de apresentação. Confira a descrição do conteúdo, os formatos, os requisitos de edição, a licença e as condições da oferta antes de concluir a compra. O pagamento é processado pela Cakto. O acesso depende da confirmação do pagamento. As condições apresentadas no checkout e nos documentos do produto devem ser consultadas antes da compra.')}</p><button className="text-button" onClick={()=>setLegal(null)}>Entendi, voltar à página <ArrowRight size={16}/></button></dialog></div>}
   </MotionConfig>;
 }

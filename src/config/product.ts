@@ -24,7 +24,7 @@
   termsOfUse: '', // Texto aprovado dos termos.
   // Ative somente após revisar a compatibilidade dos parâmetros com seu checkout.
   forwardUtmParameters: false,
-  metaPixelId: '',
+  metaPixelId: '1592812189258908',
 };
 export const price = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(product.productPrice);
 export function getCheckoutUrl() {

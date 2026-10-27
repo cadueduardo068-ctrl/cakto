@@ -26,7 +26,7 @@ As animações respeitam a preferência de movimento reduzido. O slider aceita a
 
 ## Meta Pixel e UTM
 
-O Pixel está desativado por padrão. Configure `metaPixelId` depois de revisar a política aplicável. O carregamento do script e os eventos PageView/ViewContent dependem de consentimento; InitiateCheckout depende também do clique para um checkout configurado. Não há evento Purchase. O visitante pode revogar a autorização no rodapé.
+O Pixel `1592812189258908` está configurado. O SDK e os eventos PageView/ViewContent dependem de consentimento para publicidade; InitiateCheckout depende também do clique para um checkout configurado. Não há evento Purchase. O visitante pode revogar a autorização no rodapé. A instalação antiga diretamente no HTML foi retirada para impedir rastreamento antecipado e duplicação. Veja `META-PIXEL.md` para os testes com Pixel Helper e Gerenciador de Eventos.
 
 Ative `forwardUtmParameters` somente depois de validar a compatibilidade com o checkout real. São preservados os cinco parâmetros UTM padrão, sem sobrescrever valores já existentes no link de destino.
 
