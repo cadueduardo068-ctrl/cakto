@@ -13,7 +13,7 @@
     { name: 'Calendário de ideias para posts', available: false },
     { name: 'Checklist de identidade visual', available: false },
   ],
-  checkoutUrl: '', // Cole aqui o link HTTPS oficial gerado pela Cakto.
+  checkoutUrl: 'https://pay.cakto.com.br/sadw6bg_1247295',
   supportContact: '', // E-mail real do suporte.
   sellerName: '',
   sellerDocument: '',

@@ -16,11 +16,11 @@ No PowerShell com scripts bloqueados, use `npm.cmd` no lugar de `npm`.
 
 ## Configuração da oferta
 
-Edite `src/config/product.ts`: preço, conteúdo, imagens reais e `checkoutUrl` (link HTTPS oficial gerado na Cakto). Todos os CTAs utilizam essa configuração. Sem link, a página apresenta a oferta sem executar ou simular compra. O CTA fixo mobile aparece apenas quando o checkout está disponível.
+Edite `src/config/product.ts`: preço, conteúdo, imagens reais e `checkoutUrl`. O checkout informado pelo vendedor está configurado: `https://pay.cakto.com.br/sadw6bg_1247295`. Todos os CTAs de compra utilizam essa configuração. O CTA fixo mobile aparece quando o checkout está disponível e a oferta principal está fora da tela. Os avisos de demonstração foram retirados da página; os mockups continuam identificados como composições de apresentação.
 
 Antes de abrir vendas, informe suporte, responsável, documento, ferramenta de edição, licença, entrega e textos jurídicos definitivos. Só marque bônus como disponíveis depois de produzi-los. Os textos de FAQ indicam os detalhes ainda pendentes.
 
-As avaliações autênticas são configuradas em `reviews` com nome, avatar opcional, estrelas, texto, data ISO (AAAA-MM-DD) e confirmação de compra. Sem avaliações, a página mostra a galeria demonstrativa. Não marque compra verificada sem comprovação. Preencha os três campos de `guarantee` para exibir uma política específica; enquanto isso a página informa que as condições estão pendentes. Configure `mobileEditing` com a compatibilidade real.
+As avaliações autênticas são configuradas em `reviews` com nome, avatar opcional, estrelas, texto, data ISO (AAAA-MM-DD) e confirmação de compra. Sem avaliações, a página mostra a galeria visual. Não marque compra verificada sem comprovação. Preencha os três campos de `guarantee` para exibir uma política específica; sem esses dados a seção fica oculta. Bônus não disponíveis não aparecem na oferta. Perguntas sobre condições não configuradas ficam ocultas. Configure `mobileEditing` com a compatibilidade real.
 
 As animações respeitam a preferência de movimento reduzido. O slider aceita arraste e teclado. Os diálogos jurídicos utilizam o elemento nativo `dialog`, com foco contido e fechamento por Escape. Os arquivos SVG podem ser atualizados em `public/templates`; o gerador fica em `scripts/create-demo-assets.mjs`.
 
